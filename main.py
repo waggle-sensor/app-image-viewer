@@ -17,7 +17,7 @@ def do_query(query):
     return df
 
 
-@st.cache
+@st.cache(ttl=3600)
 def get_nodes_last_30_days():
     return sorted(set(do_query({
         "start": "-30d",
@@ -26,6 +26,7 @@ def get_nodes_last_30_days():
             "name": "upload"
         }
     }).node))
+
 
 st.sidebar.title("Image Viewer")
 node = st.sidebar.selectbox("Node", get_nodes_last_30_days())
