@@ -6,6 +6,9 @@ from datetime import datetime
 from hashlib import sha1
 
 
+series_name = "upload"
+
+
 def do_query(query):
     data = json.dumps(query).encode()
     with urlopen("https://data.sagecontinuum.org/api/v1/query", data) as f:
@@ -23,9 +26,10 @@ def get_nodes_last_30_days():
         "start": "-30d",
         "tail": 1,
         "filter": {
-            "name": "upload"
+            "name": series_name,
+            "vsn": ".*",
         }
-    }).node))
+    }).vsn))
 
 
 st.sidebar.title("Image Viewer")
@@ -45,8 +49,8 @@ query = {
     "start": start.strftime("%Y-%m-%dT%H:%M:%SZ"),
     "end": end.strftime("%Y-%m-%dT%H:%M:%SZ"),
     "filter": {
-        "name": "upload",
-        "node": node,
+        "name": series_name,
+        "vsn": node,
     }
 }
 
