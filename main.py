@@ -1,6 +1,5 @@
 import pandas as pd
 import json
-from urllib.request import urlopen
 import streamlit as st
 from datetime import datetime
 from hashlib import sha1
@@ -8,20 +7,23 @@ import sage_data_client
 
 
 @st.cache(ttl=3600)
-def get_nodes_last_30_days():
+def get_nodes_last_30_days(bucket):
     df = sage_data_client.query(
         start="-30d",
         tail=1,
+        bucket=bucket,
         filter={
             "name": "upload",
             "vsn": ".*",
         }
     )
+
     return sorted(set(df["meta.vsn"].dropna()))
 
 
 st.sidebar.title("Upload Viewer")
-node = st.sidebar.selectbox("Node", get_nodes_last_30_days())
+bucket = st.sidebar.selectbox("Bucket", ["waggle", "waggle-migrate"])
+node = st.sidebar.selectbox("Node", get_nodes_last_30_days(bucket))
 date = st.sidebar.date_input("Date")
 time = st.sidebar.time_input("Time")
 window = pd.to_timedelta(st.sidebar.text_input("Time Window", "1h"))
@@ -37,6 +39,7 @@ end = dt + window
 query = {
     "start": start.strftime("%Y-%m-%dT%H:%M:%SZ"),
     "end": end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "bucket": bucket,
     "filter": {
         "name": "upload",
         "vsn": node,
