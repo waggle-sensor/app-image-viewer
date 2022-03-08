@@ -1,3 +1,2 @@
-pandas
+sage-data-client==0.4.*
 streamlit
-https://github.com/sagecontinuum/sage-data-client/releases/download/0.3.0/sage_data_client-0.3.0-py3-none-any.whl
